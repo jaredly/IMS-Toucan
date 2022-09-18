@@ -56,11 +56,13 @@ def convert_all_chapters(dirname):
     for i, name in enumerate(chapters):
         text = texts[i]
         dest = dirname + "/" + name + ".wav"
+        chapter_words = wordcounts[i]
+
         if os.path.exists(dest):
             print("Already completed", dest)
+            words_read += chapter_words
             continue
 
-        chapter_words = wordcounts[i]
         chapter_read = 0
 
         for j, sentence in enumerate(x for x in text.split('\n') if x.strip()):
@@ -78,7 +80,7 @@ def convert_all_chapters(dirname):
             chapter_read += len(sentence.split())
             estimated_wps = sum(last_few_wps) / len(last_few_wps)
 
-            print_status(words_read, total_words, estimated_wps, chapter_read, chapter_words)
+            print_status(words_read, total_words, estimated_wps, chapter_read, chapter_words, name)
 
         # print(name, 'took', time.time() - mid)
         # total = time.time() - mid
@@ -89,9 +91,9 @@ def convert_all_chapters(dirname):
 def progressbar(width, percent):
     return '[' + '=' * int(width * percent) + ' ' * (width - int(width * percent)) + ']'
 
-def print_status(words_read, total_words, estimated_wps, chapter_read, chapter_words):
-    print(progressbar(100, words_read / total_words), "{:.2f} wps".format(estimated_wps), "{:.2f} minutes remaining".format((total_words - words_read) / estimated_wps / 60))
-    print(progressbar(100, chapter_read / chapter_words), "{:.2f} minutes remaining for this chapter".format((chapter_words - chapter_read) / estimated_wps / 60), end='\r')
+def print_status(words_read, total_words, estimated_wps, chapter_read, chapter_words, current_chapter):
+    print(progressbar(100, words_read / total_words), "{:.2f} wps".format(estimated_wps), "{:.2f} minutes remaining".format((total_words - words_read) / estimated_wps / 60), '{}/{}'.format(words_read, total_words))
+    print(progressbar(100, chapter_read / chapter_words), "{:.2f} minutes remaining for this chapter ({})".format((chapter_words - chapter_read) / estimated_wps / 60, current_chapter), end='\r')
     print('\033[1F', end='')
 
 if __name__ == '__main__':

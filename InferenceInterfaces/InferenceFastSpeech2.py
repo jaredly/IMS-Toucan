@@ -197,8 +197,6 @@ class InferenceFastSpeech2(torch.nn.Module):
                                                pitch_variance_scale=pitch_variance_scale,
                                                energy_variance_scale=energy_variance_scale).cpu()), 0)
                     wav = torch.cat((wav, silence), 0)
-        if pause_after:
-            wav = torch.cat((wav, silence), 0)
         soundfile.write(file=file_location, data=wav.cpu().numpy(), samplerate=48000)
 
     def read_aloud(self,
